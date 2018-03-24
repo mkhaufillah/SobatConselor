@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Sobat Konselor</string>
+    <string name="login_failed">Login Gagal</string>
+    <string name="facebook_app_id">171366233585138</string>
+    <string name="fb_login_protocol_scheme">fb171366233585138</string>
+    <string name="error_database">Terdapat kesalahan, Silahkan ulangi!</string>
+    <string name="search_chat">Cari chat</string>
+    <string name="notification">Notifikasi</string>
+    <string name="home">Beranda</string>
+    <string name="chat">Obrolan</string>
+    <string name="forum">Forum</string>
+    <string name="donation">Donasi</string>
+    <string name="close_back_click">Tekan sekali lagi untuk keluar</string>
+    <string name="profile">Profil</string>
+    <string name="money_don">Donasi uang tunai</string>
+    <string name="ads_don">Donasi iklan</string>
+    <string name="expert_don">Donasi tenaga ahli</string>
+    <string name="description_don">
+        Ulurkan bantuanmu untuk saudaramu. Mari bersama berkomitmen membangun Indonesia sehat.
+    </string>
+    <string name="conselor">Konselor</string>
+    <string name="add">Tambah</string>
+    <string name="archive">Arsip</string>
+    <string name="avatar">Avatar</string>
+    <string name="send">Kirim</string>
+    <string name="voice_call">Panggilan suara</string>
+    <string name="video_call">Panggilan video</string>
+    <string name="type_chat">Tulis pesan kamu..</string>
+    <string name="help">Bantu</string>
+</resources>
