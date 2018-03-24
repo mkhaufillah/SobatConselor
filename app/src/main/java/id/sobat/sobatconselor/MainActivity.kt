@@ -139,6 +139,7 @@ class MainActivity : AppCompatActivity() {
                         db.collection("conselors").document("${mAuth.currentUser?.uid}").set(user)
                                 .addOnCompleteListener {
                                     if (!it.isSuccessful) {
+                                        mAuth.signOut()
                                         Toast.makeText(applicationContext, getString(R.string.error_database), Toast.LENGTH_SHORT).show()
                                         Log.w(TAG_NICKNAME, "Error getting documents.", it.exception)
                                     }

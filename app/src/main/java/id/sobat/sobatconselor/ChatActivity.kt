@@ -54,13 +54,20 @@ class ChatActivity : AppCompatActivity() {
             val dataPart: HashMap<String, Any?> = hashMapOf(
                     "text" to text,
                     "date" to Date(),
-                    "from" to "user"
+                    "from" to "cons"
             )
 
             db.collection("chats/$id/messages").document().set(dataPart)
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
                             etInChat.setText("")
+                            db.collection("chats").document(id).update("last_chat", text)
+                                    .addOnSuccessListener {
+                                        Log.d(DataLocal.TAG_QUERY, "DocumentSnapshot successfully updated!")
+                                    }
+                                    .addOnFailureListener {
+                                        Log.w(DataLocal.TAG_QUERY, "Error updating document", it)
+                                    }
                         } else {
                             Toast.makeText(applicationContext, getString(R.string.error_database), Toast.LENGTH_SHORT).show()
                             Log.w(DataLocal.TAG_QUERY, "Error getting documents.", it.exception)
