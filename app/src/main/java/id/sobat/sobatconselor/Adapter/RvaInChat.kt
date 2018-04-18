@@ -1,15 +1,15 @@
 package id.sobat.sobatconselor.Adapter
 
 import android.content.Context
+import id.sobat.sobatconselor.Model.MessageId
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import id.sobat.sobatconselor.Model.DataLocal
 import id.sobat.sobatconselor.R
-import java.util.*
 
-class RvaInChat(context: Context, private val listInChat: List<HashMap<String, Any?>>)
+class RvaInChat(context: Context, private val messages: List<MessageId>)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val inflater = LayoutInflater.from(context)
@@ -19,21 +19,21 @@ class RvaInChat(context: Context, private val listInChat: List<HashMap<String, A
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (listInChat[viewType]["from"].toString() == "cons") {
+        when (messages[viewType].from.orEmpty() == "cons") {
             true -> return VhInChat(inflater.inflate(R.layout.in_chat_t, parent, false))
             false -> return VhInChat(inflater.inflate(R.layout.in_chat_f, parent, false))
         }
     }
 
     override fun getItemCount(): Int {
-        return listInChat.size
+        return messages.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder as VhInChat
-        holder.tvTextInChat?.text = listInChat[position]["text"].toString()
-        if (listInChat[position]["date"] != null) {
-            val time = (listInChat[position]["date"] as Date).time
+        holder.tvTextInChat?.text = messages[position].text.orEmpty()
+        if (messages[position].date != null) {
+            val time = messages[position].date!!.time
             holder.tvDateInChat?.text = DataLocal.getTimeAgo(time)
         } else {
             holder.tvDateInChat?.visibility = View.GONE

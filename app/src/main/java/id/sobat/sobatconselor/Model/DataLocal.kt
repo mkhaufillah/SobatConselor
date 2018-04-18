@@ -1,6 +1,6 @@
 package id.sobat.sobatconselor.Model
 
-import java.util.*
+import java.util.Date
 
 class DataLocal {
     companion object {
@@ -9,7 +9,7 @@ class DataLocal {
         const val TAG_NICKNAME = "NICKNAME_CHECK"
         const val TAG_QUERY = "QUERY_DATA"
         const val DATA_KEY_SHARE = "SHARE_DJAFYEJSNXDDFS"
-        lateinit var user: HashMap<String, Any?>
+        var user: ConselorId? = null
         var width = 0
         var out = false
 
@@ -34,8 +34,8 @@ class DataLocal {
         private const val HOUR_MILLIS = 60 * MINUTE_MILLIS
         private const val DAY_MILLIS = 24 * HOUR_MILLIS
 
-        fun getTimeAgo(time: Long): String? {
-            var time = time
+        fun getTimeAgo(timePar: Long): String? {
+            var time = timePar
             if (time < 1000000000000L) {
                 // if timestamp given in seconds, convert to millis
                 time *= 1000

@@ -17,9 +17,11 @@ import id.sobat.sobatconselor.FragmentMain.ChatFragment
 import id.sobat.sobatconselor.FragmentMain.DonationFragment
 import id.sobat.sobatconselor.FragmentMain.ForumFragment
 import id.sobat.sobatconselor.FragmentMain.HomeFragment
+import id.sobat.sobatconselor.Model.Conselor
+import id.sobat.sobatconselor.Model.ConselorId
 import id.sobat.sobatconselor.Model.DataLocal
 import id.sobat.sobatconselor.Model.DataLocal.Companion.TAG_NICKNAME
-import java.util.*
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
@@ -109,33 +111,22 @@ class MainActivity : AppCompatActivity() {
         db.collection("conselors").document("${mAuth.currentUser?.uid}").get()
                 .addOnCompleteListener {
                     if (it.result.exists() && it.isSuccessful) {
-                        DataLocal.user = hashMapOf(
-                                "id_user" to it.result.id,
-                                "name" to it.result["name"],
-                                "point" to it.result["point"],
-                                "photo" to it.result["photo"],
-                                "cover" to it.result["cover"],
-                                "client" to it.result["client"],
-                                "description" to it.result["description"],
-                                "email" to it.result["email"],
-                                "location" to it.result["location"],
-                                "birth" to it.result["birth"],
-                                "date" to it.result["date"]
-                        )
+                        val user = it.result.toObject(ConselorId::class.java)
+                        user.idConselor = it.result.id
+                        DataLocal.user = user
                     } else if (!it.result.exists()) {
-                        val user: HashMap<String, Any?> = hashMapOf(
-                                "id_user" to mAuth.currentUser?.uid,
-                                "name" to mAuth.currentUser?.displayName,
-                                "point" to 0,
-                                "photo" to null,
-                                "cover" to null,
-                                "client" to 0,
-                                "description" to "Tidak ada deskripsi",
-                                "email" to mAuth.currentUser?.displayName,
-                                "location" to null,
-                                "birth" to null,
-                                "date" to Date()
-                        )
+                        val user = Conselor()
+                        user.name = mAuth.currentUser?.displayName
+                        user.point = 0
+                        user.photo = null
+                        user.cover = null
+                        user.client = 0
+                        user.description = null
+                        user.email = mAuth.currentUser?.email
+                        user.location = null
+                        user.birth = null
+                        user.date = Date()
+
                         db.collection("conselors").document("${mAuth.currentUser?.uid}").set(user)
                                 .addOnCompleteListener {
                                     if (!it.isSuccessful) {

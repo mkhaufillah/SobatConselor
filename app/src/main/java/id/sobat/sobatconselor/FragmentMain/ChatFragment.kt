@@ -17,10 +17,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import id.sobat.sobatconselor.Adapter.RvaChat
 import id.sobat.sobatconselor.AuthActivity
+import id.sobat.sobatconselor.Model.ChatId
 import id.sobat.sobatconselor.Model.DataLocal
 import id.sobat.sobatconselor.R
 import id.sobat.sobatconselor.SearchActivity
-import java.util.HashMap
 import kotlin.collections.ArrayList
 
 class ChatFragment : Fragment() {
@@ -29,7 +29,7 @@ class ChatFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var srChat: SwipeRefreshLayout
     private lateinit var adapter: RvaChat
-    private var data = ArrayList<HashMap<String, Any?>>()
+    private var chats = ArrayList<ChatId>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -84,7 +84,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun initRvChats(context: Context, rv: RecyclerView) {
-        adapter = RvaChat(context, data)
+        adapter = RvaChat(context, chats)
         rv.adapter = adapter
         rv.setHasFixedSize(false)
         val linearLayoutManager = LinearLayoutManager(context)
@@ -96,25 +96,17 @@ class ChatFragment : Fragment() {
         val rvChats = view.findViewById<RecyclerView>(R.id.rv_chats)
         srChat.isRefreshing = true
         db.collection("chats")
-                .whereEqualTo("id_cons", mAuth.currentUser?.uid)
+                .whereEqualTo("idCons", mAuth.currentUser?.uid)
                 .orderBy("date", Query.Direction.DESCENDING)
                 .addSnapshotListener { value, e ->
                     if (e != null) {
                         Log.d(DataLocal.TAG_QUERY, "Error getting documents: ", e)
                     } else {
-                        data = ArrayList()
+                        chats = ArrayList()
                         for (doc: DocumentSnapshot in value) {
-                            val dataPart: HashMap<String, Any?> = hashMapOf(
-                                    "id_chat" to doc.id,
-                                    "id_user" to doc.data["id_user"],
-                                    "id_cons" to doc.data["id_cons"],
-                                    "date" to doc.data["date"],
-                                    "nickname" to doc.data["nickname"],
-                                    "last_chat" to doc.data["last_chat"],
-                                    "avatar" to doc.data["avatar"],
-                                    "unread_cons" to doc.data["unread_cons"]
-                            )
-                            data.add(dataPart)
+                            val chat = doc.toObject(ChatId::class.java)
+                            chat.idChat = doc.id
+                            chats.add(chat)
                         }
                         initRvChats(view.context, rvChats)
                         srChat.isRefreshing = false

@@ -2,6 +2,7 @@ package id.sobat.sobatconselor
 
 import android.content.Intent
 import android.os.Bundle
+import id.sobat.sobatconselor.Model.Message
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -19,14 +20,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import id.sobat.sobatconselor.Adapter.RvaInChat
 import id.sobat.sobatconselor.Model.DataLocal
-import java.util.*
+import id.sobat.sobatconselor.Model.MessageId
+import id.sobat.sobatconselor.Model.ChatId
+import java.util.Date
 
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var mAuth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
     private lateinit var adapter: RvaInChat
-    private val data = ArrayList<HashMap<String, Any?>>()
+    private val data = ArrayList<MessageId>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,17 +54,16 @@ class ChatActivity : AppCompatActivity() {
 
             if (text == "") return@setOnClickListener
 
-            val dataPart: HashMap<String, Any?> = hashMapOf(
-                    "text" to text,
-                    "date" to Date(),
-                    "from" to "cons"
-            )
+            val message = Message()
+            message.from = "cons"
+            message.date = Date()
+            message.text = text
 
-            db.collection("chats/$id/messages").document().set(dataPart)
+            db.collection("chats/$id/messages").document().set(message)
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
                             etInChat.setText("")
-                            db.collection("chats").document(id).update("last_chat", text)
+                            db.collection("chats").document(id).update("lastChat", text)
                                     .addOnSuccessListener {
                                         Log.d(DataLocal.TAG_QUERY, "DocumentSnapshot successfully updated!")
                                     }
@@ -79,14 +81,16 @@ class ChatActivity : AppCompatActivity() {
                 .document(id)
                 .get().addOnCompleteListener {
                     if (it.isSuccessful) {
-                        ivInChat.setImageResource(Integer.parseInt(it.result["avatar"].toString()))
-                        tvNameInChat.text = it.result["nickname"].toString()
-                        if (Integer.parseInt(it.result["unread_cons"].toString()) > 0) {
+                        val chat = it.result.toObject(ChatId::class.java)
+                        chat?.idChat = it.result.id
+                        ivInChat.setImageResource(chat.avatar!!)
+                        tvNameInChat.text = chat.nickname.orEmpty()
+                        if (chat.unreadCons!! > 0) {
                             db.collection("chats")
                                     .document(id)
-                                    .update("unread_cons", 0)
+                                    .update("unreadCons", 0)
                                     .addOnSuccessListener {
-                                        Log.d(DataLocal.TAG_QUERY, "DocumentSnapshot successfully updated!");
+                                        Log.d(DataLocal.TAG_QUERY, "DocumentSnapshot successfully updated!")
                                     }
                                     .addOnFailureListener {
                                         Log.w(DataLocal.TAG_QUERY, "Error updating document", it)
@@ -108,14 +112,9 @@ class ChatActivity : AppCompatActivity() {
                     } else {
                         for (doc: DocumentChange in value.documentChanges) {
                             if (doc.type == DocumentChange.Type.ADDED) {
-                                val dataPart: HashMap<String, Any?> = hashMapOf(
-                                        "id_message" to doc.document.id,
-                                        "text" to doc.document.data["text"],
-                                        "date" to doc.document.data["date"],
-                                        "from" to doc.document.data["from"]
-                                )
-                                if (dataPart["from"] == "user") etInChat.setText("")
-                                data.add(dataPart)
+                                val message = doc.document.toObject(MessageId::class.java)
+                                if (message.from == "user") etInChat.setText("")
+                                data.add(message)
                                 adapter.notifyDataSetChanged()
                                 rvInChat.smoothScrollToPosition(data.size - 1)
                             }

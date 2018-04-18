@@ -27,4 +27,6 @@
     <string name="video_call">Panggilan video</string>
     <string name="type_chat">Tulis pesan kamu..</string>
     <string name="help">Bantu</string>
+    <string name="reply_sollution">Tulis solusi kamu</string>
+    <string name="wait">Silahkan tunggu..</string>
 </resources>

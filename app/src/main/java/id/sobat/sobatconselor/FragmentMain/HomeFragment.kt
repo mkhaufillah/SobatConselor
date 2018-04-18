@@ -17,19 +17,20 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import id.sobat.sobatconselor.Adapter.RvaCurhat
 import id.sobat.sobatconselor.AuthActivity
+import id.sobat.sobatconselor.Model.ConselorId
+import id.sobat.sobatconselor.Model.Curhat
+import id.sobat.sobatconselor.Model.CurhatId
 import id.sobat.sobatconselor.Model.DataLocal
 import id.sobat.sobatconselor.NotificationActivity
 import id.sobat.sobatconselor.ProfileActivity
 import id.sobat.sobatconselor.R
-import java.util.*
-import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
     private lateinit var adapter: RvaCurhat
-    private var data = ArrayList<HashMap<String, Any?>>()
+    private var curhats = ArrayList<CurhatId>()
     private lateinit var srHome: SwipeRefreshLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -90,7 +91,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun initRvCurhat(context: Context, rv: RecyclerView) {
-        adapter = RvaCurhat(context, data)
+        adapter = RvaCurhat(context, curhats)
         rv.adapter = adapter
         rv.setHasFixedSize(false)
         val linearLayoutManager = LinearLayoutManager(context)
@@ -101,25 +102,18 @@ class HomeFragment : Fragment() {
     private fun getDbCons(view: View) {
         val rvCurhat = view.findViewById<RecyclerView>(R.id.rv_curhat)
         srHome.isRefreshing = true
-        db.collection("public_problems")
+        db.collection("curhats")
                 .whereEqualTo("accept", false)
                 .orderBy("date", Query.Direction.DESCENDING)
                 .addSnapshotListener { value, e ->
                     if (e != null) {
                         Log.d(DataLocal.TAG_QUERY, "Error getting documents: ", e)
                     } else {
-                        data = ArrayList()
+                        curhats = ArrayList()
                         for (doc: DocumentSnapshot in value) {
-                            val dataPart: HashMap<String, Any?> = hashMapOf(
-                                    "id_curhat" to doc.id,
-                                    "accept" to doc["accept"],
-                                    "from" to doc["from"],
-                                    "date" to doc["date"],
-                                    "text" to doc["text"],
-                                    "nickname" to doc["nickname"],
-                                    "avatar" to doc["avatar"]
-                            )
-                            data.add(dataPart)
+                            val curhat = doc.toObject(CurhatId::class.java)
+                            curhat.idCurhat = doc.id
+                            curhats.add(curhat)
                         }
                         initRvCurhat(view.context, rvCurhat)
                         srHome.isRefreshing = false

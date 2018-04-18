@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import id.sobat.sobatconselor.Model.DataLocal
+import id.sobat.sobatconselor.Model.Forum
 
 class ForumActivity : AppCompatActivity() {
 
@@ -35,35 +36,25 @@ class ForumActivity : AppCompatActivity() {
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val data: HashMap<String, Any?> = hashMapOf(
-                                "author" to it.result["author"],
-                                "date" to it.result["date"],
-                                "name" to it.result["name"],
-                                "nickname" to it.result["nickname"],
-                                "text" to it.result["text"],
-                                "title" to it.result["title"],
-                                "avatar" to it.result["avatar"],
-                                "photo" to it.result["photo"],
-                                "banner" to it.result["banner"]
-                        )
+                        val forum = it.result.toObject(Forum::class.java)
 
-                        if (data["name"] != null && data["photo"] != null) {
-                            tvNameAuthor.text = data["name"].toString()
+                        if (forum?.name != null && forum.photo != null) {
+                            tvNameAuthor.text = forum.name
                             Picasso.get()
-                                    .load(data["photo"].toString())
+                                    .load(forum.photo)
                                     .placeholder(R.color.ic_launcher_background)
                                     .error(R.drawable.default_forum_img)
                                     .into(ivAvatarAuthor)
                         } else {
-                            tvNameAuthor.text = data["nickname"].toString()
-                            ivAvatarAuthor.setImageResource(Integer.parseInt(data["avatar"].toString()))
+                            tvNameAuthor.text = forum?.nickname.orEmpty()
+                            ivAvatarAuthor.setImageResource(forum?.avatar!!)
                         }
-                        tvDateForum.text = data["date"].toString()
-                        tvTitleForum.text = data["title"].toString()
-                        tvTextForum.text = data["text"].toString()
+                        tvDateForum.text = forum.date.toString()
+                        tvTitleForum.text = forum.title.orEmpty()
+                        tvTextForum.text = forum.text.orEmpty()
 
                         Picasso.get()
-                                .load(data["banner"].toString())
+                                .load(forum.banner.orEmpty())
                                 .placeholder(R.color.ic_launcher_background)
                                 .error(R.drawable.default_forum_img)
                                 .into(ivForum)

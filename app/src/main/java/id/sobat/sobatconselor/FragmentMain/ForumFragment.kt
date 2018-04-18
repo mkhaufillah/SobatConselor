@@ -19,8 +19,8 @@ import id.sobat.sobatconselor.AuthActivity
 import id.sobat.sobatconselor.CreateForumActivity
 import id.sobat.sobatconselor.HistForumActivity
 import id.sobat.sobatconselor.Model.DataLocal
+import id.sobat.sobatconselor.Model.ForumId
 import id.sobat.sobatconselor.R
-import java.util.HashMap
 import kotlin.collections.ArrayList
 
 class ForumFragment : Fragment() {
@@ -28,6 +28,7 @@ class ForumFragment : Fragment() {
     private lateinit var mAuth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
     private lateinit var srForums: SwipeRefreshLayout
+    private var forums = ArrayList<ForumId>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -40,7 +41,7 @@ class ForumFragment : Fragment() {
 
         mAuth = FirebaseAuth.getInstance()
 
-        srForums = view.findViewById<SwipeRefreshLayout>(R.id.sr_forums)
+        srForums = view.findViewById(R.id.sr_forums)
         srForums.setOnRefreshListener {
             getDbCons(view)
             srForums.isRefreshing = false
@@ -85,8 +86,8 @@ class ForumFragment : Fragment() {
         }
     }
 
-    private fun initRVForums(context: Context, list: List<HashMap<String, Any?>>, rv: RecyclerView) {
-        val adapter = RvaForum(context, list)
+    private fun initRVForums(context: Context, rv: RecyclerView) {
+        val adapter = RvaForum(context, forums)
         rv.adapter = adapter
         rv.setHasFixedSize(false)
         val linearLayoutManager = LinearLayoutManager(context)
@@ -103,19 +104,14 @@ class ForumFragment : Fragment() {
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val dataList: ArrayList<HashMap<String, Any?>> = ArrayList()
-                        for (document in it.result) {
-                            val data: HashMap<String, Any?> = hashMapOf(
-                                    "id_forum" to document.id,
-                                    "text" to document.data["text"],
-                                    "date" to document.data["date"],
-                                    "title" to document.data["title"],
-                                    "banner" to document.data["banner"]
-                            )
-                            dataList.add(data)
+                        forums = ArrayList()
+                        for (doc in it.result) {
+                            val forum = doc.toObject(ForumId::class.java)
+                            forum.idForum = doc.id
+                            forums.add(forum)
                         }
                         srForums.isRefreshing = false
-                        initRVForums(view.context, dataList, rvForums)
+                        initRVForums(view.context, rvForums)
                     } else {
                         Log.d(DataLocal.TAG_QUERY, "Error getting documents: ", it.exception)
                     }

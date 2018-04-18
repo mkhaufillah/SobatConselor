@@ -7,25 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
+import id.sobat.sobatconselor.Model.ForumId
 import id.sobat.sobatconselor.ForumActivity
 import id.sobat.sobatconselor.Model.DataLocal
 import id.sobat.sobatconselor.R
-import java.util.*
 
-class RvaForum(context: Context, private val listForum: List<HashMap<String, Any?>>)
+class RvaForum(context: Context, private val forums: List<ForumId>)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val inflater = LayoutInflater.from(context)
     private val listenerClick = View.OnClickListener {
         val vHolder = it.tag as VhForum
-        val idForum = listForum[vHolder.adapterPosition]["id_forum"].toString()
+        val idForum = forums[vHolder.adapterPosition].idForum.orEmpty()
         val intent = Intent(context, ForumActivity::class.java)
         intent.putExtra(DataLocal.DATA_KEY_SHARE, idForum)
         context.startActivity(intent)
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position >= listForum.size) {
+        if (position >= forums.size) {
             return 1
         }
         return 0
@@ -42,22 +42,22 @@ class RvaForum(context: Context, private val listForum: List<HashMap<String, Any
     }
 
     override fun getItemCount(): Int {
-        return listForum.size
+        return forums.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder.itemViewType == 0) {
             val holder0 = holder as VhForum
 
-            var title = listForum[position]["title"].toString()
+            var title = forums[position].title.orEmpty()
             if (title.length > 24) {
                 title = title.substring(0, 24) + "..."
             }
-            var text = listForum[position]["text"].toString()
+            var text = forums[position].text.orEmpty()
             if (text.length > 56) {
                 text = text.substring(0, 76) + "..."
             }
-            val date = listForum[position]["date"].toString()
+            val date = forums[position].date.toString()
 
             holder0.lnForum?.setOnClickListener(listenerClick)
             holder0.lnForum?.tag = holder0
@@ -65,7 +65,7 @@ class RvaForum(context: Context, private val listForum: List<HashMap<String, Any
             holder0.tvTextForum?.text = text
             holder0.tvDateForum?.text = date
             Picasso.get()
-                    .load(listForum[position]["banner"].toString())
+                    .load(forums[position].banner.orEmpty())
                     .placeholder(R.drawable.ic_photo_camera)
                     .error(R.drawable.default_forum_img)
                     .into(holder0.ivForum)
