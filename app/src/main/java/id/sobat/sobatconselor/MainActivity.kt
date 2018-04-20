@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                 .addOnCompleteListener {
                     if (it.result.exists() && it.isSuccessful) {
                         val user = it.result.toObject(ConselorId::class.java)
-                        user.idConselor = it.result.id
+                        user?.idConselor = it.result.id
                         DataLocal.user = user
                     } else if (!it.result.exists()) {
                         val user = Conselor()
@@ -133,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                                         mAuth.signOut()
                                         Toast.makeText(applicationContext, getString(R.string.error_database), Toast.LENGTH_SHORT).show()
                                         Log.w(TAG_NICKNAME, "Error getting documents.", it.exception)
+                                        updateUI(mAuth.currentUser)
                                     }
                                 }
                     } else {

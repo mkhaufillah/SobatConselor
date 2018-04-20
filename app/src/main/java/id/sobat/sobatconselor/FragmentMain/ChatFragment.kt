@@ -103,10 +103,10 @@ class ChatFragment : Fragment() {
                         Log.d(DataLocal.TAG_QUERY, "Error getting documents: ", e)
                     } else {
                         chats = ArrayList()
-                        for (doc: DocumentSnapshot in value) {
+                        for (doc: DocumentSnapshot in value!!) {
                             val chat = doc.toObject(ChatId::class.java)
-                            chat.idChat = doc.id
-                            chats.add(chat)
+                            chat?.idChat = doc.id
+                            chats.add(chat!!)
                         }
                         initRvChats(view.context, rvChats)
                         srChat.isRefreshing = false

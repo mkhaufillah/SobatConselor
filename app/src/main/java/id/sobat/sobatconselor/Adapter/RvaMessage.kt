@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import id.sobat.sobatconselor.Model.DataLocal
 import id.sobat.sobatconselor.R
 
-class RvaInChat(context: Context, private val messages: List<MessageId>)
+class RvaMessage(context: Context, private val messages: List<MessageId>)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val inflater = LayoutInflater.from(context)
@@ -31,7 +31,7 @@ class RvaInChat(context: Context, private val messages: List<MessageId>)
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder as VhInChat
-        holder.tvTextInChat?.text = messages[position].text.orEmpty()
+        holder.tvTextInChat?.text = "${messages[position].text}"
         if (messages[position].date != null) {
             val time = messages[position].date!!.time
             holder.tvDateInChat?.text = DataLocal.getTimeAgo(time)

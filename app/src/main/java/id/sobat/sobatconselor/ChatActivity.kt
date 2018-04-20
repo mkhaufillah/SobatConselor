@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import id.sobat.sobatconselor.Adapter.RvaInChat
+import id.sobat.sobatconselor.Adapter.RvaMessage
 import id.sobat.sobatconselor.Model.DataLocal
 import id.sobat.sobatconselor.Model.MessageId
 import id.sobat.sobatconselor.Model.ChatId
@@ -28,7 +28,7 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var mAuth: FirebaseAuth
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var adapter: RvaInChat
+    private lateinit var adapter: RvaMessage
     private val data = ArrayList<MessageId>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,8 +83,8 @@ class ChatActivity : AppCompatActivity() {
                     if (it.isSuccessful) {
                         val chat = it.result.toObject(ChatId::class.java)
                         chat?.idChat = it.result.id
-                        ivInChat.setImageResource(chat.avatar!!)
-                        tvNameInChat.text = chat.nickname.orEmpty()
+                        ivInChat.setImageResource(chat?.avatar!!)
+                        tvNameInChat.text = "${chat.nickname}"
                         if (chat.unreadCons!! > 0) {
                             db.collection("chats")
                                     .document(id)
@@ -110,7 +110,7 @@ class ChatActivity : AppCompatActivity() {
                     if (e != null) {
                         Log.w(DataLocal.TAG_QUERY, "Listen failed.", e)
                     } else {
-                        for (doc: DocumentChange in value.documentChanges) {
+                        for (doc: DocumentChange in value!!.documentChanges) {
                             if (doc.type == DocumentChange.Type.ADDED) {
                                 val message = doc.document.toObject(MessageId::class.java)
                                 if (message.from == "user") etInChat.setText("")
@@ -129,7 +129,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun initRVForums(rv: RecyclerView) {
-        adapter = RvaInChat(this, data)
+        adapter = RvaMessage(this, data)
         rv.adapter = adapter
         rv.setHasFixedSize(false)
         val linearLayoutManager = LinearLayoutManager(this)

@@ -110,10 +110,10 @@ class HomeFragment : Fragment() {
                         Log.d(DataLocal.TAG_QUERY, "Error getting documents: ", e)
                     } else {
                         curhats = ArrayList()
-                        for (doc: DocumentSnapshot in value) {
+                        for (doc: DocumentSnapshot in value!!) {
                             val curhat = doc.toObject(CurhatId::class.java)
-                            curhat.idCurhat = doc.id
-                            curhats.add(curhat)
+                            curhat?.idCurhat = doc.id
+                            curhats.add(curhat!!)
                         }
                         initRvCurhat(view.context, rvCurhat)
                         srHome.isRefreshing = false

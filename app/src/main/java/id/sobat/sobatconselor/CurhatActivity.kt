@@ -42,9 +42,9 @@ class CurhatActivity : AppCompatActivity() {
                         curhat = it.result.toObject(CurhatId::class.java)
                         curhat?.idCurhat = it.result.id
                         ivCurhat?.setImageResource(curhat?.avatar!!)
-                        tvNameCurhat?.text = curhat?.nickname.orEmpty()
-                        tvTextCurhat?.text = curhat?.text.orEmpty()
-                        tvDateCurhat?.text = curhat?.date.toString()
+                        tvNameCurhat?.text = "${curhat?.nickname}"
+                        tvTextCurhat?.text = "${curhat?.text}"
+                        tvDateCurhat?.text = "${curhat?.date}"
                     } else {
                         Log.d(DataLocal.TAG_QUERY, "Error getting documents: ", it.exception)
                     }
@@ -55,11 +55,11 @@ class CurhatActivity : AppCompatActivity() {
             btnCurhat.text = getString(R.string.wait)
 
             val chat = Chat()
-            chat.idUser = curhat?.from.orEmpty()
-            chat.idCons = DataLocal.user?.idConselor.orEmpty()
+            chat.idUser = curhat?.from
+            chat.idCons = DataLocal.user?.idConselor
             chat.date = Date()
-            chat.name = DataLocal.user?.name.orEmpty()
-            chat.nickname = curhat?.nickname.orEmpty()
+            chat.name = DataLocal.user?.name
+            chat.nickname = curhat?.nickname
             chat.lastChat = etCurhat?.text.toString()
             chat.photo = DataLocal.user?.photo
             chat.avatar = curhat?.avatar

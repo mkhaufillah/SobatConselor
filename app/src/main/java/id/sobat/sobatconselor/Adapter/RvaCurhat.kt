@@ -17,16 +17,14 @@ class RvaCurhat(context: Context, private val curhats: List<CurhatId>)
     private val inflater = LayoutInflater.from(context)
     private val listenerClick = View.OnClickListener {
         val vHolder = it.tag as VhCurhat
-        val idCurhat = curhats[vHolder.adapterPosition].idCurhat.orEmpty()
+        val idCurhat = "${curhats[vHolder.adapterPosition].idCurhat}"
         val intent = Intent(context, CurhatActivity::class.java)
         intent.putExtra(DataLocal.DATA_KEY_SHARE, idCurhat)
         context.startActivity(intent)
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position >= curhats.size) {
-            return 1
-        }
+        if (position >= curhats.size) return 1
         return 0
     }
 
@@ -48,11 +46,11 @@ class RvaCurhat(context: Context, private val curhats: List<CurhatId>)
         if (holder.itemViewType == 0) {
             val holder0 = holder as VhCurhat
 
-            var nicknameUser = curhats[position].nickname.orEmpty()
+            var nicknameUser = "${curhats[position].nickname}"
             if (nicknameUser.length > 24) {
                 nicknameUser = nicknameUser.substring(0, 24) + "..."
             }
-            val text = curhats[position].text.orEmpty()
+            val text = "${curhats[position].text}"
             val date = curhats[position].date.toString()
 
             holder0.btnCurhat?.setOnClickListener(listenerClick)

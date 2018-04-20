@@ -18,16 +18,14 @@ class RvaForum(context: Context, private val forums: List<ForumId>)
     private val inflater = LayoutInflater.from(context)
     private val listenerClick = View.OnClickListener {
         val vHolder = it.tag as VhForum
-        val idForum = forums[vHolder.adapterPosition].idForum.orEmpty()
+        val idForum = "${forums[vHolder.adapterPosition].idForum}"
         val intent = Intent(context, ForumActivity::class.java)
         intent.putExtra(DataLocal.DATA_KEY_SHARE, idForum)
         context.startActivity(intent)
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position >= forums.size) {
-            return 1
-        }
+        if (position >= forums.size) return 1
         return 0
     }
 
@@ -49,11 +47,11 @@ class RvaForum(context: Context, private val forums: List<ForumId>)
         if (holder.itemViewType == 0) {
             val holder0 = holder as VhForum
 
-            var title = forums[position].title.orEmpty()
+            var title = "${forums[position].title}"
             if (title.length > 24) {
                 title = title.substring(0, 24) + "..."
             }
-            var text = forums[position].text.orEmpty()
+            var text = "${forums[position].text}"
             if (text.length > 56) {
                 text = text.substring(0, 76) + "..."
             }
@@ -65,7 +63,7 @@ class RvaForum(context: Context, private val forums: List<ForumId>)
             holder0.tvTextForum?.text = text
             holder0.tvDateForum?.text = date
             Picasso.get()
-                    .load(forums[position].banner.orEmpty())
+                    .load("${forums[position].banner}")
                     .placeholder(R.drawable.ic_photo_camera)
                     .error(R.drawable.default_forum_img)
                     .into(holder0.ivForum)

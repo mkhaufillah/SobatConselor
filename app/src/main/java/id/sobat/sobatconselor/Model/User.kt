@@ -1,4 +1,4 @@
-package id.sobat.sobat.Model
+package id.sobat.sobatconselor.Model
 
 import java.util.*
 

@@ -17,16 +17,14 @@ class RvaChat(context: Context, private val chats: List<ChatId>)
     private val inflater = LayoutInflater.from(context)
     private val listenerClick = View.OnClickListener {
         val vHolder = it.tag as VhChat
-        val idChat = chats[vHolder.adapterPosition].idChat.orEmpty()
+        val idChat = "${chats[vHolder.adapterPosition].idChat}"
         val intent = Intent(context, ChatActivity::class.java)
         intent.putExtra(DataLocal.DATA_KEY_SHARE, idChat)
         context.startActivity(intent)
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position >= chats.size) {
-            return 1
-        }
+        if (position >= chats.size) return 1
         return 0
     }
 
@@ -48,11 +46,11 @@ class RvaChat(context: Context, private val chats: List<ChatId>)
         if (holder.itemViewType == 0) {
             val holder0 = holder as VhChat
 
-            var nameCons = chats[position].nickname.orEmpty()
+            var nameCons = "${chats[position].nickname}"
             if (nameCons.length > 24) {
                 nameCons = nameCons.substring(0, 24) + "..."
             }
-            var lastChat = chats[position].lastChat.orEmpty()
+            var lastChat = "${chats[position].lastChat}"
             if (lastChat.length > 56) {
                 lastChat = lastChat.substring(0, 56) + "..."
             }
@@ -64,7 +62,7 @@ class RvaChat(context: Context, private val chats: List<ChatId>)
             holder0.tvNameChat?.text = nameCons
             holder0.tvTextChat?.text = lastChat
             holder0.tvDateChat?.text = date
-            holder0.ivChat?.setImageResource(Integer.parseInt(chats[position].avatar.toString()))
+            holder0.ivChat?.setImageResource(chats[position].avatar!!)
 
             if (unread != "0") {
                 holder0.lnChat?.visibility = View.VISIBLE

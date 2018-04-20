@@ -39,22 +39,22 @@ class ForumActivity : AppCompatActivity() {
                         val forum = it.result.toObject(Forum::class.java)
 
                         if (forum?.name != null && forum.photo != null) {
-                            tvNameAuthor.text = forum.name
+                            tvNameAuthor.text = "${forum.name}"
                             Picasso.get()
-                                    .load(forum.photo)
+                                    .load("${forum.photo}")
                                     .placeholder(R.color.ic_launcher_background)
                                     .error(R.drawable.default_forum_img)
                                     .into(ivAvatarAuthor)
                         } else {
-                            tvNameAuthor.text = forum?.nickname.orEmpty()
+                            tvNameAuthor.text = "${forum?.nickname}"
                             ivAvatarAuthor.setImageResource(forum?.avatar!!)
                         }
                         tvDateForum.text = forum.date.toString()
-                        tvTitleForum.text = forum.title.orEmpty()
-                        tvTextForum.text = forum.text.orEmpty()
+                        tvTitleForum.text = "${forum.title}"
+                        tvTextForum.text = "${forum.text}"
 
                         Picasso.get()
-                                .load(forum.banner.orEmpty())
+                                .load("${forum.banner}")
                                 .placeholder(R.color.ic_launcher_background)
                                 .error(R.drawable.default_forum_img)
                                 .into(ivForum)
